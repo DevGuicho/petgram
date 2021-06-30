@@ -1,44 +1,50 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { MdFavoriteBorder } from 'react-icons/md'
-import { ImgWrapper, Img, Button, Article } from './styles'
+import { gql, useMutation } from '@apollo/client'
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+import useLocalStorage from '../../hooks/useLocalStorage'
+import useNearScreen from '../../hooks/useNearScreen'
+import FavButton from '../FavButton'
+import { ImgWrapper, Img, Article } from './styles'
+
+const LIKE_PHOTO = gql`
+  mutation likeAnonymousPhoto($input: LikePhoto!) {
+    likeAnonymousPhoto(input: $input) {
+      id
+      liked
+      likes
+    }
+  }
+`
 
 const DEFAULT_IMAGE =
   'https://images.unsplash.com/photo-1500879747858-bb1845b61beb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60'
 
 const PhotoCard = ({ id, src = DEFAULT_IMAGE, likes = 0 }) => {
-  const element = useRef(null)
-  const [show, setShow] = useState(false)
+  const key = `like-${id}`
+  const [addLike] = useMutation(LIKE_PHOTO)
+  const [liked, setLiked] = useLocalStorage(key, false)
+  const [show, element] = useNearScreen()
 
-  useEffect(() => {
-    Promise.resolve(
-      typeof window.IntersectionObserver !== 'undefined'
-        ? window.IntersectionObserver
-        : import('intersection-observer')
-    ).then(() => {
-      const observer = new window.IntersectionObserver((entries) => {
-        const { isIntersecting } = entries[0]
-        if (isIntersecting) {
-          console.log('si')
-          setShow(true)
-          observer.disconnect()
+  const handleFavClick = () => {
+    !liked &&
+      addLike({
+        variables: {
+          input: { id }
         }
       })
-      observer.observe(element.current)
-    })
-  }, [element])
-
+    setLiked(!liked)
+  }
   return (
     <Article ref={element}>
       {show && (
         <>
-          <a href={`/detail/${id}`}>
+          <Link to={`/detail/${id}`}>
             <ImgWrapper>
               <Img src={src} />
             </ImgWrapper>
-          </a>
-          <Button>
-            <MdFavoriteBorder size='32px' /> {likes} likes!
-          </Button>
+          </Link>
+          <FavButton liked={liked} likes={likes} onClick={handleFavClick} />
         </>
       )}
     </Article>

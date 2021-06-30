@@ -1,11 +1,17 @@
 import React from 'react'
+import useGetCategories from '../../hooks/useGetCategories'
 import PhotoCard from '../PhotoCard'
+import Spinner from '../Spinner'
 
-const ListOfPhotoCards = () => {
+const ListOfPhotoCards = ({ categoryId }) => {
+  const { loading, error, data } = useGetCategories({ categoryId })
+
+  if (loading) return <Spinner />
+  if (error) return <p>Error :(</p>
   return (
     <ul>
-      {[1, 2, 3, 4, 5].map((id) => (
-        <PhotoCard key={id} />
+      {data.photos.map((photo) => (
+        <PhotoCard key={photo.id} {...photo} />
       ))}
     </ul>
   )
