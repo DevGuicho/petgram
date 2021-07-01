@@ -2,7 +2,6 @@ import React from 'react'
 import PhotoCard from '../components/PhotoCard'
 import { gql, useQuery } from '@apollo/client'
 import Spinner from '../components/Spinner'
-import { useParams } from 'react-router-dom'
 
 const query = gql`
   query getSinglePhoto($id: ID!) {
@@ -17,11 +16,10 @@ const query = gql`
   }
 `
 
-const PhotoCardWithQuery = () => {
-  const { petId } = useParams()
+const PhotoCardWithQuery = ({ id }) => {
   const { loading, error, data } = useQuery(query, {
     variables: {
-      id: petId
+      id
     }
   })
   if (error) {

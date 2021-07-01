@@ -2,9 +2,13 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import Logo from './components/Logo'
-import PhotoCardWithQuery from './containers/PhotoCardWithQuery'
+import Detail from './pages/Detail'
 import Home from './pages/Home'
+import Navbar from './components/Navbar'
 import { GlobalStyle } from './styles/GlobalStyles'
+import Favs from './pages/Favs'
+import User from './pages/User'
+import RutaProtegida from './hoc/RutaProtegida'
 
 const App = () => {
   return (
@@ -15,9 +19,12 @@ const App = () => {
       </Link>
       <Switch>
         <Route exact path='/' component={Home} />
-        <Route exact path='/detail/:petId' component={PhotoCardWithQuery} />
+        <RutaProtegida exact path='/favs' component={Favs} />
+        <RutaProtegida exact path='/user' component={User} />
+        <Route exact path='/detail/:detailId' component={Detail} />
         <Route exact path='/pet/:categoryId' component={Home} />
       </Switch>
+      <Navbar />
     </Router>
   )
 }
