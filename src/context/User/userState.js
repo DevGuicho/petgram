@@ -1,23 +1,32 @@
-import React, { useReducer } from 'react'
-import { AUTH } from './types'
+import React, { useReducer, useState } from 'react'
+import { AUTH, LOGOUT } from './types'
 import UserContext from './userContext'
 import userReducer from './userReducer'
 
 const UserState = ({ children }) => {
+  const [isAuth] = useState(() => {
+    return window.sessionStorage.getItem('token')
+  })
   const initialState = {
-    isAuth: false
+    isAuth
   }
+
   const [state, dispatch] = useReducer(userReducer, initialState)
 
-  const activateAuth = () => {
+  const activateAuth = (values) => {
     dispatch({ type: AUTH })
+  }
+  const removeAuth = () => {
+    dispatch({ type: LOGOUT })
+    window.sessionStorage.removeItem('token')
   }
 
   return (
     <UserContext.Provider
       value={{
         isAuth: state.isAuth,
-        activateAuth
+        activateAuth,
+        removeAuth
       }}
     >
       {children}

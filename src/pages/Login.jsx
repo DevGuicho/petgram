@@ -1,23 +1,24 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import UserForm from '../components/UserForm'
+import useLoginUser from '../hooks/useLoginUser'
 import useUser from '../hooks/useUser'
-import useRegisterUser from '../hooks/useRegisterUser'
 
-const NotRegisterUser = () => {
-  const { register, loading, error } = useRegisterUser()
+const Login = () => {
+  const { login, loading, error } = useLoginUser()
   const { activateAuth } = useUser()
-
+  const history = useHistory()
   const errorMessage = error && 'Hay un error'
   const handleSubmit = (values) => {
-    register({
+    login({
       variables: {
         input: values
       }
     })
       .then(({ data }) => {
-        window.sessionStorage.setItem('token', data.signup)
+        window.sessionStorage.setItem('token', data.login)
         activateAuth()
-        activateAuth(values)
+        history.goBack()
       })
       .catch((error) => console.log(error))
   }
@@ -25,12 +26,11 @@ const NotRegisterUser = () => {
   return (
     <UserForm
       onSubmit={handleSubmit}
-      title='Registrarse'
+      title='Iniciar Sesion'
       disable={loading}
       error={errorMessage}
-      isRegister
     />
   )
 }
 
-export default NotRegisterUser
+export default Login

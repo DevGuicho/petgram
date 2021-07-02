@@ -1,7 +1,10 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import useInputValue from '../../hooks/useInputValue'
-import { Form, Input, Button, Title } from './styles'
-const UserForm = ({ onSubmit, title }) => {
+import { Form, Input, Title, Error } from './styles'
+import SubmitButton from '../SubmitButton'
+
+const UserForm = ({ onSubmit, title, error, disable, isRegister }) => {
   const initialValue = {
     email: '',
     password: ''
@@ -23,6 +26,7 @@ const UserForm = ({ onSubmit, title }) => {
           placeholder='email'
           onChange={handleChange}
           value={form.email}
+          disabled={disable}
         />
         <Input
           type='password'
@@ -31,9 +35,17 @@ const UserForm = ({ onSubmit, title }) => {
           placeholder='password'
           onChange={handleChange}
           value={form.password}
+          disabled={disable}
         />
-        <Button>{title}</Button>
+        <SubmitButton disabled={disable}>{title}</SubmitButton>
       </Form>
+      {isRegister && (
+        <>
+          <p>Ya tienes una cuenta ?</p>
+          <Link to='/login'>Inicia Sesión</Link>
+        </>
+      )}
+      {error && <Error>{error}</Error>}
     </>
   )
 }

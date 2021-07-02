@@ -2,14 +2,13 @@ import { gql, useMutation } from '@apollo/client'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import useLocalStorage from '../../hooks/useLocalStorage'
 import useNearScreen from '../../hooks/useNearScreen'
 import FavButton from '../FavButton'
 import { ImgWrapper, Img, Article } from './styles'
 
 const LIKE_PHOTO = gql`
-  mutation likeAnonymousPhoto($input: LikePhoto!) {
-    likeAnonymousPhoto(input: $input) {
+  mutation likePhoto($input: LikePhoto!) {
+    likePhoto(input: $input) {
       id
       liked
       likes
@@ -20,20 +19,17 @@ const LIKE_PHOTO = gql`
 const DEFAULT_IMAGE =
   'https://images.unsplash.com/photo-1500879747858-bb1845b61beb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60'
 
-const PhotoCard = ({ id, src = DEFAULT_IMAGE, likes = 0 }) => {
-  const key = `like-${id}`
+const PhotoCard = ({ id, liked, src = DEFAULT_IMAGE, likes = 0 }) => {
   const [addLike] = useMutation(LIKE_PHOTO)
-  const [liked, setLiked] = useLocalStorage(key, false)
+
   const [show, element] = useNearScreen()
 
   const handleFavClick = () => {
-    !liked &&
-      addLike({
-        variables: {
-          input: { id }
-        }
-      })
-    setLiked(!liked)
+    addLike({
+      variables: {
+        input: { id }
+      }
+    })
   }
   return (
     <Article ref={element}>
